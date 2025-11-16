@@ -30,6 +30,7 @@ export const getCourse = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Course not found" });
       return;
     }
+
     res.json({ message: "Course retrieved successfully", data: course });
   } catch (error) {
     res.status(500).json({ message: "Error retrieving course", error });
@@ -42,8 +43,9 @@ export const createCourse = async (
 ): Promise<void> => {
   try {
     const { teacherId, teacherName } = req.body;
+
     if (!teacherId || !teacherName) {
-      res.status(400).json({ message: "Teacher ID and name are required" });
+      res.status(400).json({ message: "Teacher Id and name are required" });
       return;
     }
 
@@ -80,12 +82,14 @@ export const updateCourse = async (
   try {
     const course = await Course.get(courseId);
     if (!course) {
-      res.status(404).json({ message: "Courses not found" });
+      res.status(404).json({ message: "Course not found" });
       return;
     }
 
     if (course.teacherId !== userId) {
-      res.status(403).json({ message: "Not authorized to update this course" });
+      res
+        .status(403)
+        .json({ message: "Not authorized to update this course " });
       return;
     }
 
@@ -136,18 +140,20 @@ export const deleteCourse = async (
   try {
     const course = await Course.get(courseId);
     if (!course) {
-      res.status(404).json({ message: "Courses not found" });
+      res.status(404).json({ message: "Course not found" });
       return;
     }
 
     if (course.teacherId !== userId) {
-      res.status(403).json({ message: "Not authorized to delete this course" });
+      res
+        .status(403)
+        .json({ message: "Not authorized to delete this course " });
       return;
     }
 
     await Course.delete(courseId);
 
-    res.json({ message: "Course deleted successfully" });
+    res.json({ message: "Course deleted successfully", data: course });
   } catch (error) {
     res.status(500).json({ message: "Error deleting course", error });
   }
@@ -159,7 +165,7 @@ export const getUploadVideoUrl = async (
 ): Promise<void> => {
   const { fileName, fileType } = req.body;
 
-  if (fileName || !fileType) {
+  if (!fileName || !fileType) {
     res.status(400).json({ message: "File name and type are required" });
     return;
   }
